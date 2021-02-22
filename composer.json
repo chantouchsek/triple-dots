@@ -1,0 +1,24 @@
+{
+    "name": "triple-dots",
+    "version": "0.0.1",
+    "authors": [
+        {
+            "name": "Chantouch Sek",
+            "email": "chantouchsek.cs83@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "description": "Triple dots is a javascript plugin for truncating multiple line content with an ellipsis.",
+    "keywords": [
+        "truncate",
+        "truncating",
+        "ellipsis",
+        "triple-dots",
+        "dotdotdot",
+        "multiline",
+        "text",
+        "text-overflow",
+        "overflow",
+        "dots"
+    ]
+}

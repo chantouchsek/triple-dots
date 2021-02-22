@@ -1,0 +1,44 @@
+{
+    "name": "triple-dots",
+    "version": "0.0.1",
+    "main": "dist/triple-dots.js",
+    "module": "dist/triple-dots.esm.js",
+    "types": "dist/triple-dots.d.ts",
+    "author": {
+        "name": "Chantouch Sek",
+        "email": "chantouchsek.cs83@gmail.com"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/chantouchsek/triple-dots.git"
+    },
+    "description": "Triple dots is a javascript plugin for truncating multiple line content with an ellipsis.",
+    "keywords": [
+        "truncate",
+        "truncating",
+        "ellipsis",
+        "trile-dots",
+        "dotdotdot",
+        "multiline",
+        "text",
+        "text-overflow",
+        "overflow",
+        "dots"
+    ],
+    "scripts": {
+        "build-gulp": "npm run clean && gulp default",
+        "build": "npm run clean && tsc",
+        "clean": "rimraf dist"
+    },
+    "devDependencies": {
+        "@types/node": "^14.14.31",
+        "gulp": "^4.0.2",
+        "gulp-rename": "^2.0.0",
+        "gulp-replace": "^1.0.0",
+        "gulp-terser": "^2.0.1",
+        "gulp-typescript": "^6.0.0-alpha.1",
+        "rimraf": "^3.0.2",
+        "typescript": "^4.1.5"
+    }
+}
