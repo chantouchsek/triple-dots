@@ -1,6 +1,6 @@
 {
     "name": "triple-dots",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "main": "dist/triple-dots.js",
     "module": "dist/triple-dots.esm.js",
     "types": "dist/triple-dots.d.ts",

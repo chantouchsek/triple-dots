@@ -39,7 +39,7 @@ interface dddOptions {
  */
 export default class TripleDots {
     /**    Plugin version. */
-    static version: string = '0.0.2';
+    static version: string = '0.0.3';
 
     /**    Default options. */
     static options: dddOptions = {
@@ -121,7 +121,7 @@ export default class TripleDots {
             }
         }
 
-        //	If the element allready is a tripleDots instance.
+        //	If the element already is a tripleDots instance.
         //		-> Destroy the previous instance.
         const oldAPI = this.container['tripleDots'];
         if (oldAPI) {
@@ -164,6 +164,8 @@ export default class TripleDots {
             this.options.height = this._getMaxHeight();
         }
 
+        this.expanded = false;
+        this.isClamped = false;
         //	Truncate the text.
         this.truncate();
 
@@ -299,7 +301,7 @@ export default class TripleDots {
      */
     truncate() {
         let isTruncated = false;
-
+        this.expanded = false;
         //	Fill the container with all the original content.
         this.container.innerHTML = '';
         this.originalContent.forEach((element) => {
@@ -312,7 +314,7 @@ export default class TripleDots {
         //	Truncate the text.
         if (!this._fits()) {
             isTruncated = true;
-            this.expanded = false
+            this.expanded = true
             this._truncateToNode(this.container);
         }
 
