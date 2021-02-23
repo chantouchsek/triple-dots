@@ -54,7 +54,7 @@ const js = (cb) => {
     return gulp
         .src('dist/triple-dots.esm.js')
         .pipe(rename('triple-dots.js'))
-        .pipe(replace('export default Dotdotdot;', ''))
+        .pipe(replace('export default TripleDots;', ''))
         .pipe(gulp.dest('dist'));
 };
 

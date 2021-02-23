@@ -1,6 +1,6 @@
 {
     "name": "triple-dots",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "main": "dist/triple-dots.js",
     "module": "dist/triple-dots.esm.js",
     "types": "dist/triple-dots.d.ts",
@@ -18,18 +18,20 @@
         "truncate",
         "truncating",
         "ellipsis",
-        "trile-dots",
+        "tripl-dots",
         "dotdotdot",
         "multiline",
         "text",
         "text-overflow",
         "overflow",
-        "dots"
+        "dots",
+        "vue-triple-dots"
     ],
     "scripts": {
         "build-gulp": "npm run clean && gulp default",
         "build": "npm run clean && tsc",
-        "clean": "rimraf dist"
+        "clean": "rimraf dist",
+        "watch": "gulp watch"
     },
     "devDependencies": {
         "@types/node": "^14.14.31",

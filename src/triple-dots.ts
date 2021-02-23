@@ -38,13 +38,14 @@ interface dddOptions {
  * Class for a multiline ellipsis.
  */
 export default class TripleDots {
-    /**	Plugin version. */
-    static version: string = '4.1.0';
+    /**    Plugin version. */
+    static version: string = '0.0.2';
 
-    /**	Default options. */
+    /**    Default options. */
     static options: dddOptions = {
         ellipsis: '\u2026 ',
-        callback: function () {},
+        callback: function () {
+        },
         truncate: 'word',
         tolerance: 0,
         keep: null,
@@ -85,11 +86,15 @@ export default class TripleDots {
     /** Function to invoke on window resize. Needs to be stored so it can be removed later on. */
     resizeEvent: EventListener | null;
 
+    /** Check the element is clamped */
+    isClamped: boolean
+    expanded: boolean
+
     /**
      * Truncate a multiline element with an ellipsis.
      *
-     * @param {HTMLElement} 	container						The element to truncate.
-     * @param {object} 			[options=Dotdotdot.options]		Options for the menu.
+     * @param {HTMLElement}    container                        The element to truncate.
+     * @param {object}            [options=TripleDots.options]        Options for the menu.
      */
     constructor(
         container: HTMLElement,
@@ -116,9 +121,9 @@ export default class TripleDots {
             }
         }
 
-        //	If the element allready is a dotdotdot instance.
+        //	If the element allready is a tripleDots instance.
         //		-> Destroy the previous instance.
-        const oldAPI = this.container['dotdotdot'];
+        const oldAPI = this.container['tripleDots'];
         if (oldAPI) {
             oldAPI.destroy();
         }
@@ -132,7 +137,7 @@ export default class TripleDots {
         });
 
         //	Store the API.
-        this.container['dotdotdot'] = this.API;
+        this.container['tripleDots'] = this.API;
 
         //	Store the original style attribute;
         this.originalStyle = this.container.getAttribute('style') || '';
@@ -144,7 +149,7 @@ export default class TripleDots {
         this.ellipsis = document.createTextNode(this.options.ellipsis);
 
         //	Set CSS properties for the container.
-        var computedStyle = window.getComputedStyle(this.container);
+        const computedStyle = window.getComputedStyle(this.container);
         if (computedStyle['word-wrap'] !== 'break-word') {
             this.container.style['word-wrap'] = 'break-word';
         }
@@ -169,7 +174,7 @@ export default class TripleDots {
     }
 
     /**
-     *	Restore the container to a pre-init state.
+     *    Restore the container to a pre-init state.
      */
     restore() {
         //	Stop the watch.
@@ -186,6 +191,7 @@ export default class TripleDots {
         this.originalContent.forEach((element) => {
             this.container.append(element);
         });
+        this.expanded = false;
     }
 
     /**
@@ -193,7 +199,7 @@ export default class TripleDots {
      */
     destroy() {
         this.restore();
-        this.container['dotdotdot'] = null;
+        this.container['tripleDots'] = null;
     }
 
     /**
@@ -203,8 +209,8 @@ export default class TripleDots {
         //	Stop any previous watch.
         this.unwatch();
 
-        /**	The previously measure sizes. */
-        var oldSizes = {
+        /**    The previously measure sizes. */
+        let oldSizes = {
             width: null,
             height: null,
         };
@@ -212,7 +218,7 @@ export default class TripleDots {
         /**
          * Measure the sizes and start the truncate proces.
          */
-        var watchSizes = (
+        let watchSizes = (
             element: Window | HTMLElement,
             width: string,
             height: string
@@ -292,7 +298,7 @@ export default class TripleDots {
      * Start the truncate process.
      */
     truncate() {
-        var isTruncated = false;
+        let isTruncated = false;
 
         //	Fill the container with all the original content.
         this.container.innerHTML = '';
@@ -306,17 +312,15 @@ export default class TripleDots {
         //	Truncate the text.
         if (!this._fits()) {
             isTruncated = true;
+            this.expanded = false
             this._truncateToNode(this.container);
         }
 
         //	Add a class to the container to indicate whether or not it is truncated.
-        this.container.classList[isTruncated ? 'add' : 'remove'](
-            'ddd-truncated'
-        );
+        this.container.classList[isTruncated ? 'add' : 'remove']('ddd-truncated');
 
         //	Invoke the callback.
         this.options.callback.call(this.container, isTruncated);
-
         return isTruncated;
     }
 
@@ -326,7 +330,7 @@ export default class TripleDots {
      * @param {HTMLElement} element The element to truncate.
      */
     _truncateToNode(element: HTMLElement) {
-        var _coms = [],
+        const _coms = [],
             _elms = [];
 
         //	Empty the element
@@ -385,13 +389,14 @@ export default class TripleDots {
         //	Get last element
         //		-> the element that overflows.
 
-        var _last = _elms[Math.max(0, Math.min(e, _elms.length - 1))];
+        let _last = _elms[Math.max(0, Math.min(e, _elms.length - 1))];
 
         //	Border case
         //		-> the last node with only an ellipsis in it...
         if (_last.nodeType == 1) {
             let element = document.createElement(_last.nodeName);
             element.append(this.ellipsis);
+            this.isClamped = true
 
             _last.replaceWith(element);
 
@@ -422,18 +427,18 @@ export default class TripleDots {
      * @param {HTMLElement} element The element to truncate.
      */
     _truncateToWord(element: HTMLElement) {
-        var text = element.textContent,
-            seporator = text.indexOf(' ') !== -1 ? ' ' : '\u3000',
-            words = text.split(seporator);
+        const text = element.textContent,
+            separator = text.indexOf(' ') !== -1 ? ' ' : '\u3000',
+            words = text.split(separator);
 
-        for (var a = words.length; a >= 0; a--) {
+        for (let a = words.length; a >= 0; a--) {
             element.textContent = this._addEllipsis(
-                words.slice(0, a).join(seporator)
+                words.slice(0, a).join(separator)
             );
 
             if (this._fits()) {
                 if (this.options.truncate == 'letter') {
-                    element.textContent = words.slice(0, a + 1).join(seporator);
+                    element.textContent = words.slice(0, a + 1).join(separator);
                     this._truncateToLetter(element);
                 }
                 break;
@@ -444,13 +449,13 @@ export default class TripleDots {
     /**
      * Truncate a word by removing letters from the end.
      *
-     * @param 	{HTMLElement} element The element to truncate.
+     * @param    {HTMLElement} element The element to truncate.
      */
     _truncateToLetter(element: HTMLElement) {
-        var letters = element.textContent.split(''),
+        let letters = element.textContent.split(''),
             text = '';
 
-        for (var a = letters.length; a >= 0; a--) {
+        for (let a = letters.length; a >= 0; a--) {
             text = letters.slice(0, a).join('');
 
             if (!text.length) {
@@ -470,21 +475,19 @@ export default class TripleDots {
      *
      * @return {boolean} Whether or not the content fits in the container.
      */
-    _fits(): boolean {
-        return (
-            this.container.scrollHeight <=
-            this.maxHeight + this.options.tolerance
-        );
+    private _fits(): boolean {
+        const maxHeight = this.maxHeight + this.options.tolerance
+        return this.container.scrollHeight <= maxHeight;
     }
 
     /**
      * Add the ellipsis to a text.
      *
-     * @param 	{string} text 	The text to add the ellipsis to.
-     * @return	{string}		The text with the added ellipsis.
+     * @param    {string} text    The text to add the ellipsis to.
+     * @return    {string}        The text with the added ellipsis.
      */
-    _addEllipsis(text: string): string {
-        var remove = [' ', '\u3000', ',', ';', '.', '!', '?'];
+    private _addEllipsis(text: string): string {
+        const remove = [' ', '\u3000', ',', ';', '.', '!', '?'];
 
         while (remove.indexOf(text.slice(-1)) > -1) {
             text = text.slice(0, -1);
@@ -533,7 +536,7 @@ export default class TripleDots {
                 //	Loop over all contents and remove nodes that can be removed.
                 TripleDots.$.contents(element).forEach((text) => {
                     //	Remove Text nodes that do not take up space in the DOM.
-                    //	This kinda asumes a default display property for the elements in the container.
+                    //	This kinda assumes a default display property for the elements in the container.
                     if (text.nodeType == 3) {
                         if (text.textContent.trim() == '') {
                             let prev = text.previousSibling as HTMLElement,
@@ -575,13 +578,13 @@ export default class TripleDots {
             return this.options.height;
         }
 
-        var style = window.getComputedStyle(this.container);
+        const style = window.getComputedStyle(this.container);
 
         //	Find smallest CSS height
-        var properties = ['maxHeight', 'height'],
+        let properties = ['maxHeight', 'height'],
             height = 0;
 
-        for (var a = 0; a < properties.length; a++) {
+        for (let a = 0; a < properties.length; a++) {
             let property = style[properties[a]];
             if (property.slice(-2) == 'px') {
                 height = parseFloat(property);
@@ -598,7 +601,7 @@ export default class TripleDots {
                 'paddingBottom',
             ];
 
-            for (var a = 0; a < properties.length; a++) {
+            for (let a = 0; a < properties.length; a++) {
                 let property = style[properties[a]];
                 if (property.slice(-2) == 'px') {
                     height -= parseFloat(property);
@@ -615,9 +618,9 @@ export default class TripleDots {
         /**
          * Find elements by a query selector in an element.
          *
-         * @param {string}		selector 			The selector to search for.
-         * @param {HTMLElement}	[element=document]	The element to search in.
-         * @return {array} 							The found elements.
+         * @param {string}        selector            The selector to search for.
+         * @param {HTMLElement}    [element=document]    The element to search in.
+         * @return {array}                            The found elements.
          */
         find: (
             selector: string,
@@ -632,8 +635,8 @@ export default class TripleDots {
         /**
          * Collect child nodes (HTML elements and TextNodes) in an element.
          *
-         * @param {HTMLElement}	[element=document]	The element to search in.
-         * @return {array} 							The found nodes.
+         * @param {HTMLElement}    [element=document]    The element to search in.
+         * @return {array}                            The found nodes.
          */
         contents: (element?: HTMLElement | Document): Node[] => {
             element = element || document;
@@ -645,10 +648,10 @@ export default class TripleDots {
 //	The jQuery plugin.
 (function ($) {
     if (typeof $ != 'undefined') {
-        $.fn.dotdotdot = function (options) {
+        $.fn.tripleDots = function (options) {
             return this.each((e, element) => {
                 let dot = new TripleDots(element, options);
-                element['dotdotdot'] = dot.API;
+                element['tripleDots'] = dot.API;
             });
         };
     }
