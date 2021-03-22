@@ -1,6 +1,11 @@
 Triple dots
 ================
 
+[![Latest Version on NPM](https://img.shields.io/npm/v/triple-dots.svg?style=flat-square)](https://npmjs.com/package/triple-dots)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![npm](https://img.shields.io/npm/dt/triple-dots.svg?style=flat-square)](https://npmjs.com/package/triple-dots)
+[![npm](https://img.shields.io/npm/dm/triple-dots.svg?style=flat-square)](https://npmjs.com/package/triple-dots)
+
 Triple dots is a javascript plugin for truncating multiple line content on a webpage. 
 It uses an ellipsis to indicate that there is more text than currently visible. 
 Optionally, the plugin can keep a "read more" anchor visible at the end of the content, after the ellipsis.
